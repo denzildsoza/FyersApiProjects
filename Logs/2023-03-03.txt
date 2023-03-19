@@ -1,0 +1,12 @@
+
+1677816812597 :: place_order ::  :: 1677816812760 :: {'s': 'error', 'code': -99, 'message': 'RMS:223030325204:NSE,OPTIDX,47121,NIFTY-09Mar2023-17400.0000-CE,INTRADAY,,2023-03-09 00:00:00,XD08685,S,50,I,130.65,FUND LIMIT INSUFFICIENT,AVAILABLE FUND =19576.40,ADDITIONAL REQUIRED FUND=80385.88,CALCULATED SPAN & EXPOSURE FOR ORDER=99962.28', 'id': '223030325204'}
+
+1677817126949 :: place_order ::  :: 1677817127137 :: {'s': 'ok', 'code': 1101, 'message': 'Order Submitted Successfully. Your Order Ref. No.12303039291', 'id': '12303039291'}
+
+1677818191398 :: place_order ::  :: 1677818191964 :: {'s': 'ok', 'code': 1101, 'message': 'Order Submitted Successfully. Your Order Ref. No.123030312271', 'id': '123030312271'}
+
+1677818287121 :: modify_order :: {'id': '123030312271', 'type': 4, 'limitPrice': 208.85, 'stopPrice': 208.95} :: 1677818287971 :: {'s': 'ok', 'code': 1101, 'message': 'Successfully modified order', 'id': '123030312271'}
+
+1677818340883 :: cancel_order :: {'id': '123030312271'} :: 1677818342328 :: {'s': 'ok', 'code': 1103, 'message': 'Successfully cancelled order', 'id': '123030312271'}
+
+1677818342529 :: place_order ::  :: 1677818342860 :: {'s': 'ok', 'code': 1101, 'message': 'Order Submitted Successfully. Your Order Ref. No.123030312721', 'id': '123030312721'}
