@@ -32,7 +32,7 @@ def get_ITM_NF_PE(resistance_level):
 access_token_file = open("access_token.txt", "r")
 access_token = access_token_file.read()
 client_id = '3H021OQ8ZI-100'
-fyers = fyersModel.FyersModel(client_id=client_id, token=access_token,log_path="D:\Python Projects\hello_api\Logs") # D:\Python Projects\hello_api\Logs
+fyers = fyersModel.FyersModel(client_id=client_id, token=access_token,log_path="/f/Logs") # /f/Logs
 
 
 ws_access_token = f"3H021OQ8ZI-100:{access_token}"
@@ -40,7 +40,7 @@ data_type = "symbolData"
 run_background = False
 
 
-fyersSocket = ws.FyersSocket(access_token=ws_access_token,run_background=False,log_path="D:\Python Projects\hello_api\Logs")
+fyersSocket = ws.FyersSocket(access_token=ws_access_token,run_background=False,log_path="/f/Logs")
 
 base  = 25000   #<------------------------------------------------------------------------------------------------------Base Level
 hd    = -2
@@ -63,7 +63,7 @@ hd    = -2
 
 def thread_Rapper(objc):
     
-    level,usymbol,highl,lowl,UNdl_ToKen,qty,target,typ,dir =  [objc[k] for k in ('level','symbol','h_LeVel','l_LeVel','UNdl_ToKen','qty','target','typ',"dir")]
+    usymbol,highl,lowl,UNdl_ToKen,qty =  [objc[k] for k in ('symbol','h_LeVel','l_LeVel','UNdl_ToKen','qty')]
     
     
     def onCrossing(msg): 
@@ -82,33 +82,17 @@ def thread_Rapper(objc):
                             "stopLoss":0,
                             "takeProfit":0
                         }
-                x = fyers.place_order(data)
+                fyers.place_order(data)
                 
                 fyersSocket.websocket_data = None
-                print("placed")
-                OrderId = x['id']
-                fyers_object = open("orderId.txt", "w")
-                fyers_object.write(f'{OrderId}+{target}')
-                fyers_object.close()
+                
                 
 
 
-    def onCloseCall(msg):
-        if (msg[0]["timestamp"] % 3600 // 60) % 15 == 0 and msg[0]["ltp"] >= level:
-            fyersSocket.websocket_data = onCrossing
-            print("closed call")
-                
-    def onClosePut(msg):
-        if (msg[0]["timestamp"] % 3600 // 60) % 15 == 0 and msg[0]["ltp"] <= level:
-            fyersSocket.websocket_data = onCrossing
-            print("closed put")
+   
 
-    if typ == "o" and dir == "s":
-        fyersSocket.websocket_data = onCloseCall
-    if typ == "o" and dir == "r":
-        fyersSocket.websocket_data = onClosePut
-    if typ == "c" :
-        fyersSocket.websocket_data = onCrossing
+    
+    fyersSocket.websocket_data = onCrossing
 
     def subscribe_new_symbol(symbol_list):        
         global fyersSocket, data_type
@@ -133,14 +117,9 @@ if __name__ == "__main__":
             expiry_date = my_date
             break
 
-    level = input("enter the level")        
+    level = input("Enter the Level: ")        
     expiryDate = (str(expiry_date).split('-'))
-    while True:
-        timestamp = strftime('%H:%M:%S').split(":")
-        if int(timestamp[0]) == 9 and int(timestamp[1]) >= 15:
-            break
-        elif int(timestamp[0]) >9  :
-            break       
+        
             
     temparray = level.split()
     
@@ -150,30 +129,32 @@ if __name__ == "__main__":
         h_LeVel =  eval(temparray[0])+3
         l_LeVel =  eval(temparray[0])-3
         qty = int(temparray[2])
-        target = int(temparray[3])
     elif  temparray[1].lower() == 's' and  eval(temparray[0]) >= base:
         ITM = get_ITM_BNF_CE( eval(temparray[0]))
         UNdl_ToKen = 'NSE:NIFTYBANK-INDEX'
         h_LeVel =  eval(temparray[0])+6
         l_LeVel =  eval(temparray[0])-6
         qty = int(temparray[2])
-        target = int(temparray[3])
     elif  temparray[1].lower() == 'r' and  eval(temparray[0]) <= base:
         ITM = get_ITM_NF_PE( eval(temparray[0]))
         UNdl_ToKen = 'NSE:NIFTY50-INDEX'
         h_LeVel =  eval(temparray[0])+3
         l_LeVel =  eval(temparray[0])-3
         qty = int(temparray[2])
-        target = int(temparray[3])
     elif  temparray[1].lower() == 'r' and  eval(temparray[0]) >= base:
         ITM = get_ITM_BNF_PE( eval(temparray[0]))
         UNdl_ToKen = 'NSE:NIFTYBANK-INDEX'
         h_LeVel =  eval(temparray[0])+6
         l_LeVel =  eval(temparray[0])-6 
         qty = int(temparray[2])
-        target = int(temparray[3])
-    tempobj = { 'level':eval(temparray[0]) , 'symbol' : ITM , 'h_LeVel' : h_LeVel , 'l_LeVel' : l_LeVel ,'UNdl_ToKen':UNdl_ToKen,'qty':qty,'target':target,"typ":temparray[4].lower(),"dir":temparray[1].lower()}
+    tempobj = { 'symbol' : ITM , 'h_LeVel' : h_LeVel , 'l_LeVel' : l_LeVel ,'UNdl_ToKen':UNdl_ToKen,'qty':qty}
     p = Process(target=thread_Rapper, args=(tempobj,))
+    while True:
+        timestamp = strftime('%H:%M:%S').split(":")
+        if int(timestamp[0]) == 9 and int(timestamp[1]) >= 15:
+            break
+        elif int(timestamp[0]) >9  :
+            break   
     p.start()
            
         

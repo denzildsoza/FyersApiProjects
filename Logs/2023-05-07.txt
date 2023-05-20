@@ -1,0 +1,11 @@
+
+1683460922351 :: orderBook ::  :: 1683460922966 :: {'s': 'error', 'code': -8, 'message': 'Your token has expired. Please generate a token'}
+
+1683460923499 :: orderBook ::  :: 1683460923600 :: {'s': 'error', 'code': -8, 'message': 'Your token has expired. Please generate a token'}
+
+1683460930068 :: orderBook ::  :: 1683460930532 :: {'s': 'error', 'code': -8, 'message': 'Your token has expired. Please generate a token'}
+
+1683460958755 :: getCall ::  :: 1683460958755 :: 
+HTTPSConnectionPool(host='api.fyers.in', port=443): Max retries exceeded with url: /api/v2/orders?id=01984483 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000260F6ECFED0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+1683460958756 :: orderBook ::  :: 1683460958756 :: response
+ERROR  : 'dict' object has no attribute 'json'
