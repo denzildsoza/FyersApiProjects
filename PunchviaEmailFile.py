@@ -1,5 +1,3 @@
-from json import dumps, load
-from math import ceil
 from fyers_api import fyersModel
 from datetime import timedelta,date
 import email,imaplib,calendar,threading,calendar
@@ -82,10 +80,13 @@ def check_mail():
 
 
 def thread_Rapper(objc):
+    def doNothing(msg):
+        pass
+
     level,usymbol,highl,lowl,UNdl_ToKen,qty,target,typ,dir =  [objc[k] for k in ('level','symbol','h_LeVel','l_LeVel','UNdl_ToKen','qty','target','typ',"dir")]
     def onCrossing(msg): 
         if  msg[0]['ltp'] <= highl and msg[0]['ltp'] >= lowl :
-                fyersSocket.websocket_data = None
+                fyersSocket.websocket_data = doNothing
                 data = {
                             "symbol":usymbol,
                             "qty":qty,
@@ -156,29 +157,29 @@ if __name__ == "__main__":
                 if  temparray[1].lower() == 's' and  eval(temparray[0]) <= base:
                     ITM = get_ITM(sym_details,eval(temparray[0]),'NIFTY','CE',False)
                     UNdl_ToKen = 'NSE:NIFTY50-INDEX'
-                    h_LeVel = entrylevel+2
-                    l_LeVel = entrylevel-2
+                    h_LeVel = entrylevel+1
+                    l_LeVel = entrylevel-5
                     qty = int(temparray[2])
                     target = int(temparray[3])
                 elif  temparray[1].lower() == 's' and  eval(temparray[0]) >= base:
                     ITM = get_ITM(sym_details,eval(temparray[0]),'BANKNIFTY','CE',False)
                     UNdl_ToKen = 'NSE:NIFTYBANK-INDEX'
-                    h_LeVel =  entrylevel+3
-                    l_LeVel =  entrylevel-3
+                    h_LeVel =  entrylevel+2
+                    l_LeVel =  entrylevel-10
                     qty = int(temparray[2])
                     target = int(temparray[3])
                 elif  temparray[1].lower() == 'r' and  eval(temparray[0]) <= base:
                     ITM = get_ITM(sym_details,eval(temparray[0]),'NIFTY','PE',True)
                     UNdl_ToKen = 'NSE:NIFTY50-INDEX'
-                    h_LeVel =  entrylevel+2
-                    l_LeVel =  entrylevel-2
+                    h_LeVel =  entrylevel+5
+                    l_LeVel =  entrylevel-1
                     qty = int(temparray[2])
                     target = int(temparray[3])
                 elif  temparray[1].lower() == 'r' and  eval(temparray[0]) >= base:
                     ITM = get_ITM(sym_details,eval(temparray[0]),'BANKNIFTY','PE',True)
                     UNdl_ToKen = 'NSE:NIFTYBANK-INDEX'
-                    h_LeVel =  entrylevel+3
-                    l_LeVel =  entrylevel-3 
+                    h_LeVel =  entrylevel+10
+                    l_LeVel =  entrylevel-2
                     qty = int(temparray[2])
                     target = int(temparray[3])
                 tempobj = { 'level':eval(temparray[0]) ,  'symbol' : ITM , 'h_LeVel' : h_LeVel , 'l_LeVel' : l_LeVel ,'UNdl_ToKen':UNdl_ToKen,'qty':qty,'target':target,"typ":temparray[4].lower(),"dir":temparray[1].lower()}

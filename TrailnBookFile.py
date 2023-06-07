@@ -1,9 +1,8 @@
 from fyers_api import fyersModel
-from time import sleep,strftime
+from time import sleep
 from fyers_api.Websocket import ws
 import threading
 from multiprocessing import Process
-from json import load, loads
 
 
 access_token_file = open("/f/Logs/access_token.txt", "r")
@@ -42,6 +41,8 @@ def fetchOrderData(orderData):
             }
     
 def trailSlBookProfit(orderData):
+    def doNothing(msg):
+        pass
     print("here")
     filledQty,tradedPrice,usymbol,limitfactor,triggerlimit,bookProfit,trailToBreakevenL,trailToBreakevenF = [orderData[k] for k in ('filledQty','tradedPrice','usymbol','limitfactor','triggerlimit','bookProfit','trailToBreakevenL','trailToBreakevenF')]
     sleep(1)
@@ -49,11 +50,11 @@ def trailSlBookProfit(orderData):
     data = {
                 "symbol":usymbol,
                 "qty":filledQty,
-                "type":2, 
+                "type":4, 
                 "side":-1,
                 "productType":"INTRADAY",
-                "limitPrice":0,
-                "stopPrice":0,
+                "limitPrice":limitfactor,
+                "stopPrice":triggerlimit,
                 "validity":"DAY",
                 "disclosedQty":0,
                 "offlineOrder":"False",
@@ -81,7 +82,7 @@ def trailSlBookProfit(orderData):
 
     def OnPriceUpdateBookProfit(msg): 
         if  msg[0]['ltp'] >= bookProfit :
-            fyersSocket.websocket_data = None
+            fyersSocket.websocket_data = doNothing
             fyers.cancel_order(orderData)
             data = {
                         "symbol":usymbol,
@@ -99,7 +100,7 @@ def trailSlBookProfit(orderData):
                     }
             sleep(0.2)
             fyers.place_order(data)
-    fyersSocket.websocket_data = OnPriceUpdateTrailSL
+    fyersSocket.websocket_data = OnPriceUpdateBookProfit
 
     def subscribe_new_symbol(symbol_list):        
         global fyersSocket, data_type
@@ -114,31 +115,22 @@ def trailSlBookProfit(orderData):
 if __name__ == "__main__":
     while True:
         orderIdf = open("/f/Logs/orderId.txt", "r").read()
-        print(orderIdf)
         if orderIdf:
             OrderData = fetchOrderData(orderIdf)
             if OrderData["status"] == 2 and OrderData["side"] == 1 :  
                 arr = OrderData["usymbol"].split(':')
                 if arr[1].startswith('NIFTY'):
-                    OrderData["limitfactor"] = 6
-                    OrderData["triggerlimit"] = 5
-                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 60
-                    OrderData["trailToBreakevenL"] = 1
-                    OrderData["trailToBreakevenF"] = 2
+                    OrderData["limitfactor"] =OrderData["tradedPrice"]+ 6
+                    OrderData["triggerlimit"] =OrderData["tradedPrice"]+ 5
+                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 12
+                    OrderData["trailToBreakevenL"] = OrderData["tradedPrice"]+1
+                    OrderData["trailToBreakevenF"] = OrderData["tradedPrice"]+2
                 if arr[1].startswith('BANKNIFTY'):
-                    OrderData["limitfactor"] = 12
-                    OrderData["triggerlimit"] = 10
-                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 120
-                    OrderData["trailToBreakevenL"] = 2
-                    OrderData["trailToBreakevenF"] = 4
-
-                if arr[1].startswith('TATA'):
-                    OrderData["limitfactor"] = 3
-                    OrderData["triggerlimit"] = 2
-                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 3
-                    OrderData["trailToBreakevenL"] = 0.5
-                    OrderData["trailToBreakevenF"] = 0.1
-                
+                    OrderData["limitfactor"] = OrderData["tradedPrice"]+12
+                    OrderData["triggerlimit"] =OrderData["tradedPrice"]+ 10
+                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 50
+                    OrderData["trailToBreakevenL"] =OrderData["tradedPrice"]+2
+                    OrderData["trailToBreakevenF"] =OrderData["tradedPrice"]+4               
                 p = Process(target=trailSlBookProfit, args=(OrderData,))
                 p.start()
                 print("spawned")
