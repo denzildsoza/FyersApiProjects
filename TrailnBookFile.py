@@ -120,15 +120,15 @@ if __name__ == "__main__":
             if OrderData["status"] == 2 and OrderData["side"] == 1 :  
                 arr = OrderData["usymbol"].split(':')
                 if arr[1].startswith('NIFTY'):
-                    OrderData["limitfactor"] =OrderData["tradedPrice"]+ 6
-                    OrderData["triggerlimit"] =OrderData["tradedPrice"]+ 5
-                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 12
+                    OrderData["limitfactor"] =round(OrderData["tradedPrice"]+ 6, 1)
+                    OrderData["triggerlimit"] =round(OrderData["tradedPrice"]+ 5,1)
+                    OrderData["bookProfit"] = round(OrderData["tradedPrice"] + 12,1)
                     OrderData["trailToBreakevenL"] = OrderData["tradedPrice"]+1
                     OrderData["trailToBreakevenF"] = OrderData["tradedPrice"]+2
                 if arr[1].startswith('BANKNIFTY'):
-                    OrderData["limitfactor"] = OrderData["tradedPrice"]+12
-                    OrderData["triggerlimit"] =OrderData["tradedPrice"]+ 10
-                    OrderData["bookProfit"] = OrderData["tradedPrice"] + 50
+                    OrderData["limitfactor"] = round(OrderData["tradedPrice"]+12,1)
+                    OrderData["triggerlimit"] =round(OrderData["tradedPrice"]+ 10,1)
+                    OrderData["bookProfit"] = round(OrderData["tradedPrice"] + 50,1)
                     OrderData["trailToBreakevenL"] =OrderData["tradedPrice"]+2
                     OrderData["trailToBreakevenF"] =OrderData["tradedPrice"]+4               
                 p = Process(target=trailSlBookProfit, args=(OrderData,))
