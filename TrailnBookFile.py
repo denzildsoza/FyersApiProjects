@@ -44,7 +44,7 @@ def trailSlBookProfit(orderData):
     def doNothing(msg):
         pass
     print("here")
-    filledQty,tradedPrice,usymbol,limitfactor,triggerlimit,bookProfit,trailToBreakevenL,trailToBreakevenF = [orderData[k] for k in ('filledQty','tradedPrice','usymbol','limitfactor','triggerlimit','bookProfit','trailToBreakevenL','trailToBreakevenF')]
+    filledQty,tradedPrice,usymbol,limitPrice,stopPrice,bookProfit,trailToBreakevenL,trailToBreakevenF = [orderData[k] for k in ('filledQty','tradedPrice','usymbol','limitPrice','stopPrice','bookProfit','trailToBreakevenL','trailToBreakevenF')]
     sleep(1)
     orderData = {}
     data = {
@@ -52,15 +52,16 @@ def trailSlBookProfit(orderData):
                 "qty":filledQty,
                 "type":4, 
                 "side":-1,
-                "productType":"INTRADAY",
-                "limitPrice":limitfactor,
-                "stopPrice":triggerlimit,
+                "productType":"MARGIN",
+                "limitPrice":limitPrice,
+                "stopPrice":stopPrice,
                 "validity":"DAY",
                 "disclosedQty":0,
                 "offlineOrder":"False",
                 "stopLoss":0,
                 "takeProfit":0
             }
+    print(data)
     response = fyers.place_order(data)
     print(response)
     orderData["id"] = response["id"]
@@ -68,7 +69,7 @@ def trailSlBookProfit(orderData):
     dataType = "symbolData"
 
     def OnPriceUpdateTrailSL(msg):
-        if  msg[0]['ltp'] >=  tradedPrice + (2 * limitfactor):
+        if  msg[0]['ltp'] >=  tradedPrice + (2 * limitPrice):
             data = {
                         "id":orderData["id"], 
                         "type":4, 
@@ -89,7 +90,7 @@ def trailSlBookProfit(orderData):
                         "qty":filledQty,
                         "type":2, 
                         "side":-1,
-                        "productType":"INTRADAY",
+                        "productType":"MARGIN",
                         "limitPrice":0,
                         "stopPrice":0,
                         "validity":"DAY",
@@ -120,14 +121,14 @@ if __name__ == "__main__":
             if OrderData["status"] == 2 and OrderData["side"] == 1 :  
                 arr = OrderData["usymbol"].split(':')
                 if arr[1].startswith('NIFTY'):
-                    OrderData["limitfactor"] =round(OrderData["tradedPrice"]+ 6, 1)
-                    OrderData["triggerlimit"] =round(OrderData["tradedPrice"]+ 5,1)
+                    OrderData["limitPrice"] =round(OrderData["tradedPrice"]- 4, 1)
+                    OrderData["stopPrice"] =round(OrderData["tradedPrice"]- 3,1)
                     OrderData["bookProfit"] = round(OrderData["tradedPrice"] + 12,1)
                     OrderData["trailToBreakevenL"] = OrderData["tradedPrice"]+1
                     OrderData["trailToBreakevenF"] = OrderData["tradedPrice"]+2
                 if arr[1].startswith('BANKNIFTY'):
-                    OrderData["limitfactor"] = round(OrderData["tradedPrice"]+12,1)
-                    OrderData["triggerlimit"] =round(OrderData["tradedPrice"]+ 10,1)
+                    OrderData["limitPrice"] = round(OrderData["tradedPrice"]-10,1)
+                    OrderData["stopPrice"] =round(OrderData["tradedPrice"]- 8,1)
                     OrderData["bookProfit"] = round(OrderData["tradedPrice"] + 50,1)
                     OrderData["trailToBreakevenL"] =OrderData["tradedPrice"]+2
                     OrderData["trailToBreakevenF"] =OrderData["tradedPrice"]+4               

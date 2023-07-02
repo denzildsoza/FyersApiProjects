@@ -1,4 +1,0 @@
-
-1678582221520 :: place_order ::  :: 1678582222345 :: {'s': 'error', 'code': -391, 'message': 'Order Quantity should be in multiples of lot size.', 'id': ''}
-
-1678582239490 :: place_order ::  :: 1678582242481 :: {'s': 'error', 'code': -99, 'message': 'ORA: amo MKT Orders are disallowed for NFO OPTIDX', 'id': ''}

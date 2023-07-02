@@ -1,10 +1,11 @@
 
 from fyers_api import fyersModel,accessToken
 from fyers_api.Websocket import ws
-from datetime import datetime,timedelta
+from datetime import datetime
 import pandas as pd
+import time
 client_id = '3H021OQ8ZI-100'
-access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkuZnllcnMuaW4iLCJpYXQiOjE2ODYxMDkyNjAsImV4cCI6MTY4NjE4NDIwMCwibmJmIjoxNjg2MTA5MjYwLCJhdWQiOlsieDowIiwieDoxIiwieDoyIiwiZDoxIiwiZDoyIiwieDoxIiwieDowIl0sInN1YiI6ImFjY2Vzc190b2tlbiIsImF0X2hhc2giOiJnQUFBQUFCa2ZfeE13NG5wTmZzQjk3MGtQOUpfaFNlZko4XzFVemxtMmZGVk5qUnhrSlYtYjdJVFppaVRPbzlOeV90SUJzcWREOTRKQXNZeHdBN094NUJVa2dIV1JfdFkycnNUMUlpamlYUG51VkMtRWY3bzNhTT0iLCJkaXNwbGF5X25hbWUiOiJERU5aSUwgRFNPVVpBIiwib21zIjoiSzEiLCJmeV9pZCI6IlhEMDg2ODUiLCJhcHBUeXBlIjoxMDAsInBvYV9mbGFnIjoiTiJ9._5y9Vmq6RiTQ3MJ3GJiWyK-zcEnPfsDNbFonO0jbDDc'
+access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkuZnllcnMuaW4iLCJpYXQiOjE2ODcyMzEzMzIsImV4cCI6MTY4NzMwNzQxMiwibmJmIjoxNjg3MjMxMzMyLCJhdWQiOlsieDowIiwieDoxIiwieDoyIiwiZDoxIiwiZDoyIiwieDoxIiwieDowIl0sInN1YiI6ImFjY2Vzc190b2tlbiIsImF0X2hhc2giOiJnQUFBQUFCa2tSdGtnQm1xTFRDRXJKTTMyRTNnUEp5SktMSHRxODl4YzRUMmlaaTQxQll0eXQ2M24zTkNxeHV0SHIwUzc2MHhtVTZvMWpBQ0F1S1RqQkxBdXlyMkJKdjVhdWNhWmVRV0dJNFgyQzlKQUh2RXE4QT0iLCJkaXNwbGF5X25hbWUiOiJERU5aSUwgRFNPVVpBIiwib21zIjoiSzEiLCJmeV9pZCI6IlhEMDg2ODUiLCJhcHBUeXBlIjoxMDAsInBvYV9mbGFnIjoiTiJ9.tE2wL1Qd87r3DdQ--Y7UrlCi5NmfJgMzYTXRcUkS4x8'
 
 fyers = fyersModel.FyersModel(client_id=client_id, token=access_token,log_path="D:\Python Projects\hello_api")
 
@@ -30,22 +31,32 @@ fyers = fyersModel.FyersModel(client_id=client_id, token=access_token,log_path="
 # status , filledQty , tradedPrice , usymbol , side =  [obj[k] for k in ('status','filledQty','tradedPrice','symbol','side')]
 # print(status , filledQty , tradedPrice , usymbol , side)
 
+data = {"id":'23062000135233'}
+response = fyers.orderbook(data=data)
+print(response)
+obj = response["orderBook"][0]
+status , filledQty , tradedPrice , usymbol , side =  [obj[k] for k in ('status','filledQty','tradedPrice','symbol','side')]
 
+limitfactor =round(tradedPrice- 4, 1)
+triggerlimit=round(tradedPrice- 3,1)
+start_time = time.time()
 data = {
-                "symbol":'NSE:NIFTY2360818650CE',
-                "qty":50,
+                "symbol":usymbol,
+                "qty":filledQty,
                 "type":4, 
                 "side":-1,
-                "productType":"INTRADAY",
-                "limitPrice":10,
-                "stopPrice":15,
+                "productType":"MARGIN",
+                "limitPrice":limitfactor,
+                "stopPrice":triggerlimit,
                 "validity":"DAY",
                 "disclosedQty":0,
                 "offlineOrder":"True",
                 "stopLoss":0,
                 "takeProfit":0
             }
-x = fyers.place_order(data)
+while True:
+  x = fyers.place_order(data)
+print("--- %s seconds ---" % (time.time() - start_time))
 print(x)                
 # OrderId = x['id']
 # fyers_object = open("orderId.txt", "w")

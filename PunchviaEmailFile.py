@@ -92,7 +92,7 @@ def thread_Rapper(objc):
                             "qty":qty,
                             "type":2, 
                             "side":1,
-                            "productType":"INTRADAY",
+                            "productType":"MARGIN",
                             "limitPrice":0,
                             "stopPrice":0,
                             "validity":"DAY",
